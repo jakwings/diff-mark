@@ -1,0 +1,36 @@
+{
+  "name": "diff-mark",
+  "version": "2.0.0",
+  "description": "A variant of Diffmark implemented in JavaScript.",
+  "main": "diffmark.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha --reporter spec --bail",
+    "demo": "node demo/demo.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jakwings/diff-mark.git"
+  },
+  "keywords": [
+    "dictionary",
+    "diff",
+    "markup",
+    "word",
+    "vocabulary",
+    "lexical",
+    "diffmark",
+    "rantionary",
+    "rant"
+  ],
+  "author": "Jak Wings <jakwings@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jakwings/diff-mark/issues"
+  },
+  "homepage": "https://github.com/jakwings/diff-mark",
+  "devDependencies": {
+    "chalk": "~1.0.0",
+    "mocha": "~2.2.1",
+    "should": "~5.2.0"
+  }
+}
