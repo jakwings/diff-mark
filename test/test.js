@@ -51,10 +51,10 @@ describe('Diffmark.mark', function () {
     });
 
     describe('\\_: any normal character _', function () {
-      it('<word>, "\\_" -> "<word>_"', function () {
-        should(mark('play', '\\a')).equal('play\a');
-        should(mark('yes', '\\a\\a')).equal('yes\a\a');
-        should(mark('ok', '\\a\\a\\a')).equal('ok\a\a\a');
+      it('<word>, "\\<any>" -> "<word><any>"', function () {
+        should(mark('play', '\\a')).equal('playa');
+        should(mark('yes', '\\\\+')).equal('\\yes');
+        should(mark('ok', '\\\\\\\\+')).equal('\\\\ok');
       });
       it('<word>, "\\+" -> "<word>+"', function () {
         should(mark('play', '\\+')).equal('play+');
