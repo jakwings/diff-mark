@@ -109,6 +109,18 @@
     for (var i = s.length - 1; s[i] === c; i--) {
       len++;
     }
+    if (s[s.length-len-1] !== '\\') {
+      return len;
+    }
+    // Is the slash right before s[s.length-len] balanced?
+    for (var i = s.length - len - 1; i >= 0; i--) {
+      if (s[i] === '\\') {
+        if (s[i-1] !== '\\') {
+          return len - 1;
+        }
+        i--;
+      }
+    }
     return len;
   };
 
@@ -134,31 +146,28 @@
       var p = trimPattern(pattern.substr(start, end - start));
       var plen = p.length;
       start = end + 1;
+      var cnt = 0;
       if (p[0] === '+') {
         string += unescape(p.substr(1));
-      } else if (p[plen-1] === '+' && p[plen-2] !== '\\') {
+      } else if (rcount(p, '+') > 0) {
         string = unescape(p.substr(0, plen - 1)) + string;
       } else if (p[0] === '|') {
         string = string.substr(plen - 1);
       } else if (p[0] === '-') {  // also deals with /^-+$/
-        var len = lcount(p, '-');
-        string = string.substr(0, string.length - len) + unescape(p.substr(len));
-      } else if (p[plen-1] === '-' && p[plen-2] !== '\\') {
-        var len = rcount(p, '-');
-        if (p[plen-len-1] === '\\') { len--; }
-        string = unescape(p.substr(0, plen - len)) + string.substr(len);
+        cnt = lcount(p, '-');
+        string = string.substr(0, string.length - cnt) + unescape(p.substr(cnt));
+      } else if ((cnt = rcount(p, '-')) > 0) {
+        string = unescape(p.substr(0, plen - cnt)) + string.substr(cnt);
       } else if (p[0] === '*') {
-        var len = lcount(p, '*');
-        var re = new RegExp('[^ ]+(?=(?: +[^ ]+){' + (len - 1) + '}$)');
+        cnt = lcount(p, '*');
+        var re = new RegExp('[^ ]+(?=(?: +[^ ]+){' + (cnt - 1) + '}$)');
         string = string.replace(re, function (_) {
-          return unescape(p.substr(len));  // in case p contains '$'
+          return unescape(p.substr(cnt));  // in case p contains '$'
         });
-      } else if (p[plen-1] === '*' && p[plen-2] !== '\\') {
-        var len = rcount(p, '*');
-        if (p[plen-len-1] === '\\') { len--; }
-        var re = new RegExp('^((?:[^ ]+ +){' + (len - 1) + '})[^ ]+');
+      } else if ((cnt = rcount(p, '*')) > 0) {
+        var re = new RegExp('^((?:[^ ]+ +){' + (cnt - 1) + '})[^ ]+');
         string = string.replace(re, function (_, capture) {
-          return capture + unescape(p.substr(0, plen - len));
+          return capture + unescape(p.substr(0, plen - cnt));
         });
       } else {
         string += unescape(p);
