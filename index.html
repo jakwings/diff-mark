@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <title>diff-mark</title>
+    <script src="diffmark.js"></script>
+  </head>
+
+  <body>
+    <table border="1">
+      <thead>
+        <tr><th>method</th><th>arg#1</th><th>arg#2</th><th>result</th></tr>
+      </thead>
+      <tbody>
+        <tr id="diff">
+          <td>diff</td>
+          <td><input type="text" placeholder="before" autofocus="true"></td>
+          <td><input type="text" placeholder="after"></td>
+          <td id="diff-result"></td>
+        </tr>
+        <tr id="mark">
+          <td>mark</td>
+          <td><input type="text" placeholder="text"></td>
+          <td><input type="text" placeholder="diff"></td>
+          <td id="mark-result"></td>
+        </tr>
+      </tbody>
+    </table>
+    <script>
+      var elmDiff = document.getElementById('diff');
+      var elmDiffOutput = document.getElementById('diff-result');
+      var elmDiffArgs = [].slice.call(elmDiff.getElementsByTagName('input'));
+      var elmMark = document.getElementById('mark');
+      var elmMarkOutput = document.getElementById('mark-result');
+      var elmMarkArgs = [].slice.call(elmMark.getElementsByTagName('input'));
+      elmDiffArgs.forEach(function (d) {
+        d.addEventListener('input', function (evt) {
+          elmDiffOutput.textContent = diffmark.diff(elmDiffArgs[0].value, elmDiffArgs[1].value);
+          elmMarkArgs[0].value = elmDiffArgs[0].value;
+          elmMarkArgs[1].value = elmDiffOutput.textContent;
+          elmMarkOutput.textContent = diffmark.mark(elmMarkArgs[0].value, elmMarkArgs[1].value);
+        }, false);
+      });
+      elmMarkArgs.forEach(function (d) {
+        d.addEventListener('input', function (evt) {
+          elmMarkOutput.textContent = diffmark.mark(elmMarkArgs[0].value, elmMarkArgs[1].value);
+          elmDiffArgs[0].value = elmMarkArgs[0].value;
+          elmDiffArgs[1].value = elmMarkOutput.textContent;
+          elmDiffOutput.textContent = diffmark.diff(elmDiffArgs[0].value, elmDiffArgs[1].value);
+        }, false);
+      });
+    </script>
+
+    <pre id="dump"></pre>
+    <script>
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'RantionaryDump.txt?_=' + (new Date()).getTime());
+      xhr.onreadystatechange = function () {
+        if (this.readyState === 4) {
+          var dump = [];
+          this.responseText.split('\n').forEach(function (line) {
+            var words = line.split('/');
+            if (words.length < 2) { return; }
+            var diffs = words.map(function (item, i, arr) {
+              if (i > 0) {
+                return diffmark.diff(arr[0], item);
+              }
+              return item;
+            });
+            words = diffs.map(function (item, i, arr) {
+              if (i > 0) {
+                return diffmark.mark(arr[0], item);
+              }
+              return item;
+            });
+            dump.push('>> ' + diffs.join('/') + '\n > ' + words.join('/'));
+          });
+          document.getElementById('dump').textContent = dump.join('\n\n');
+        }
+      };
+      xhr.send();
+    </script>
+  </body>
+
+</html>
