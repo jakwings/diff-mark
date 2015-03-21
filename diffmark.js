@@ -340,7 +340,7 @@
       // be shorter?
       if (before.indexOf(' ') < 0) {
         var ret = '*' + escape(after, 0, 1);
-        return result.length <= ret.length ? result : ret;
+        return result.length < ret.length ? result : ret;
       }
       return result;
     }
