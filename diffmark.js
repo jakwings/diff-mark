@@ -119,6 +119,8 @@
           return len - 1;
         }
         i--;
+      } else {
+        return len;
       }
     }
     return len;
