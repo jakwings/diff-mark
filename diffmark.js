@@ -301,7 +301,7 @@
     var lm = longestLeftMatch(before, after);
     var rm = longestRightMatch(before, after);
     if (before.length > after.length) {
-      if (lm > 0) {  // append
+      if (lm > 0 && lm >= rm) {  // append
         // e.g. "ABC", "AB" -> "-"
         // e.g. "ABC", "AD" -> "--D"
         result = pad('-', before.length - lm) + escape(after.substr(lm), 0, 1);
@@ -316,7 +316,7 @@
         }
       }
     } else {
-      if (lm > 0) {  // append
+      if (lm > 0 && lm >= rm) {  // append
         if (before.length === lm) {
           // e.g. "AB", "ABC" -> "C"
           result = escape(after.substr(lm), 1, 1);
