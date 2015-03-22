@@ -301,7 +301,6 @@
     var lm = longestLeftMatch(before, after);
     var rm = longestRightMatch(before, after);
 
-    var spaceIndex = -1;
     if (before[lm-1] === ' ' && after[lm-1] === ' ' &&
         before[before.length-rm] === ' ' && after[after.length-rm] === ' ' &&
         before.indexOf(' ', lm) === before.length - rm) {
