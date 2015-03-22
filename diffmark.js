@@ -300,6 +300,44 @@
     var result = null;
     var lm = longestLeftMatch(before, after);
     var rm = longestRightMatch(before, after);
+
+    var spaceIndex = -1;
+    if (before[lm-1] === ' ' && after[lm-1] === ' ' &&
+        before[before.length-rm] === ' ' && after[after.length-rm] === ' ' &&
+        before.indexOf(' ', lm) === before.length - rm) {
+      // e.g. "A B C", "A X C" -> "X**"
+      // e.g. "A B C", "A X X C" -> "X X**"
+      return escape(after.substr(lm, after.length - rm - lm), 1, 0) + '**';
+    }
+    if (before[lm-1] === ' ' && after[lm-1] === ' ') {
+      if (before.indexOf(' ', lm) < 0 && before[before.length-1] !== ' ') {
+        // e.g. "A B", "A X" -> "*X"
+        // e.g. "A B", "A X X" -> "*X X"
+        return '*' + escape(after.substr(lm), 0, 1);
+      } else if (before.length < after.length) {
+        // e.g. "A ", "A X" -> "X"
+        return escape(after.substr(lm), 1, 1);
+      } else {
+        // e.g. "A B ", "A X" -> "--X"
+        return pad('-', before.length - lm) + escape(after.substr(lm), 0, 1);
+      }
+    }
+    if (before[before.length-rm] === ' ' && after[after.length-rm] === ' ') {
+      // Thanks to dear JavaScript: ' A'.lastIndexOf(' ', -1) -> 0 (Don't care.)
+      if (before.lastIndexOf(' ', before.length - rm - 1) < 0) {
+        // e.g. "A B", "X B" -> "X*"
+        // e.g. "A B", "X X B" -> "X X*"
+        return escape(after.substr(0, after.length - rm), 1, 0) + '*';
+      } else if (before.length < after.length) {
+        // e.g. " B", "X B" -> "X+"
+        return escape(after.substr(0, after.length - rm), 1, 0) + '+';
+      } else {
+        // e.g. " B B", "X B" -> "X--"
+        return escape(after.substr(0, after.length - rm), 1, 0) +
+            pad('-', before.length - rm);
+      }
+    }
+
     if (before.length > after.length) {
       if (lm > 0 && lm >= rm) {  // append
         // e.g. "ABC", "AB" -> "-"
@@ -344,6 +382,7 @@
       }
       return result;
     }
+
     var lcsData = {startBefore: 0, startAfter: 0, length: 0};
     if (findLongestCommonSubstring(before, after, lcsData)) {
       lcsData.before = before;
