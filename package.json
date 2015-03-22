@@ -1,6 +1,6 @@
 {
   "name": "diff-mark",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A variant of Diffmark implemented in JavaScript.",
   "main": "diffmark.js",
   "scripts": {
