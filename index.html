@@ -8,7 +8,9 @@
     <script src="diffmark.js"></script>
     <style>
       table { background: white; }
+      input { width: 120px; padding: 0; margin: 0; font-size: inherit; }
       #diff-result, #mark-result { white-space: pre; }
+      .error { background: #fbb; }
       .sp { background: yellow; }
     </style>
   </head>
@@ -46,14 +48,18 @@
           elmDiffOutput.textContent = diffmark.diff(elmDiffArgs[0].value, elmDiffArgs[1].value);
           elmMarkArgs[0].value = elmDiffArgs[0].value;
           elmMarkArgs[1].value = elmDiffOutput.textContent;
-          elmMarkOutput.textContent = diffmark.mark(elmMarkArgs[0].value, elmMarkArgs[1].value);
+          var ret = diffmark.mark(elmMarkArgs[0].value, elmMarkArgs[1].value);
+          elmMarkOutput.className = elmMarkArgs[1].className = (ret != null ? '' : 'error');
+          elmMarkOutput.textContent = (ret != null ? ret : 'ERROR');
           elmDiffOutput.innerHTML = elmDiffOutput.innerHTML.replace(/ /g, '<span class="sp">&sdot;</span>');
           elmMarkOutput.innerHTML = elmMarkOutput.innerHTML.replace(/ /g, '<span class="sp">&sdot;</span>');
         }, false);
       });
       elmMarkArgs.forEach(function (d) {
         d.addEventListener('input', function (evt) {
-          elmMarkOutput.textContent = diffmark.mark(elmMarkArgs[0].value, elmMarkArgs[1].value);
+          var ret = diffmark.mark(elmMarkArgs[0].value, elmMarkArgs[1].value);
+          elmMarkOutput.className = elmMarkArgs[1].className = (ret != null ? '' : 'error');
+          elmMarkOutput.textContent = (ret != null ? ret : 'ERROR');
           elmDiffArgs[0].value = elmMarkArgs[0].value;
           elmDiffArgs[1].value = elmMarkOutput.textContent;
           elmDiffOutput.textContent = diffmark.diff(elmDiffArgs[0].value, elmDiffArgs[1].value);
